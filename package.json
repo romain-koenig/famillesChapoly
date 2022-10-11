@@ -1,0 +1,22 @@
+{
+  "name": "familleschapoly",
+  "version": "1.0.0",
+  "description": "Lieu de résiudence des familles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romain-koenig/famillesChapoly.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/romain-koenig/famillesChapoly/issues"
+  },
+  "homepage": "https://github.com/romain-koenig/famillesChapoly#readme",
+  "dependencies": {
+    "leaflet": "^1.9.2"
+  }
+}
