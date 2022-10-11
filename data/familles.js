@@ -27,7 +27,7 @@ const Familles = {
 	"Lyon": 13,
 }
 
-// https://hihayk.github.io/scale/#6/6/44/68/32/54/3/34/5DA753/64/77/68/white
+// Color palette generated with:  https://hihayk.github.io/scale/#6/6/44/68/32/54/3/34/5DA753/64/77/68/white
 
 const Couleurs = {
 	0: "#FFFFFF",
