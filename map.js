@@ -1,24 +1,37 @@
 var map = L.map('map').setView([45.8148, 4.7907], 11);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
+const iconsize = 40;
+
+var chapolyIcon = L.icon({
+	iconUrl: './pics/cropped-logo-sanstypo.png',
+	iconSize: [iconsize, iconsize], // size of the icon
+	iconAnchor: [iconsize / 2, iconsize / 2], // point of the icon which will correspond to marker's location
+	popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+});
+
+console.log(chapolyIcon);
 
 
 //Chapoly
-var marker = L.marker([45.76963, 4.74082]).addTo(map);
+var marker = L.marker([45.76963, 4.74082], { icon: chapolyIcon }).bindPopup('École du Chapoly').addTo(map);
+
 
 for (const ville in Familles) {
 	if (Object.hasOwnProperty.call(Familles, ville)) {
-		const couleur = Familles[ville];
+		const nb_familles = Familles[ville];
 		L.geoJSON(eval(ville),
 			{
 				color: 'black',
-				fillColor: Couleurs[couleur],
+				fillColor: Couleurs[nb_familles],
 				fillOpacity: 0.5
-			}).addTo(map);
+			})
+			.bindPopup(`${ville} - ${nb_familles}`)
+			.addTo(map);
 	}
 }
 
@@ -30,10 +43,9 @@ for (const valeur in Couleurs) {
 		const element = Couleurs[valeur];
 
 		console.log(element);
-		legende += "<li>" + valeur.toString() + " - " + element + "</li>";
-
+		legende += `<li>${valeur.toString()} - <span class="legend_${valeur}">lol</span></li>`;
 	}
 }
-legende = "<ul>" + legende + "</ul>";
+legende = `<ul class="legende">${legende}</ul>`;
 console.log(legende);
 document.getElementById("legende").innerHTML = legende
