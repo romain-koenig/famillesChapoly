@@ -1,4 +1,4 @@
-var map = L.map('map').setView([45.76938, 4.74056], 11);
+var map = L.map('map').setView([45.8148, 4.7907], 11);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -6,34 +6,34 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
+
+//Chapoly
 var marker = L.marker([45.76963, 4.74082]).addTo(map);
 
 for (const ville in Familles) {
 	if (Object.hasOwnProperty.call(Familles, ville)) {
-
-		console.log(ville);
-
-		const element = Familles[ville];
-		console.log(element);
-
+		const couleur = Familles[ville];
 		L.geoJSON(eval(ville),
 			{
-				color: Couleurs[element],
+				color: 'black',
+				fillColor: Couleurs[couleur],
 				fillOpacity: 0.5
 			}).addTo(map);
 	}
 }
 
 
+let legende = "";
 
-L.geoJSON(Bully,
-	{
-		color: Couleurs[Familles.Bully],
-		fillOpacity: 0.5
-	}).addTo(map);
+for (const valeur in Couleurs) {
+	if (Object.hasOwnProperty.call(Couleurs, valeur)) {
+		const element = Couleurs[valeur];
 
-L.geoJSON(Cailloux_sur_Fontaines,
-	{
-		color: Couleurs[Familles.Cailloux_sur_Fontaines],
-		fillOpacity: 0.5
-	}).addTo(map);
+		console.log(element);
+		legende += "<li>" + valeur.toString() + " - " + element + "</li>";
+
+	}
+}
+legende = "<ul>" + legende + "</ul>";
+console.log(legende);
+document.getElementById("legende").innerHTML = legende
