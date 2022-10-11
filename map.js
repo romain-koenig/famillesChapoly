@@ -36,16 +36,23 @@ for (const ville in Familles) {
 }
 
 
-let legende = "";
+let tableContent = "";
 
-for (const valeur in Couleurs) {
-	if (Object.hasOwnProperty.call(Couleurs, valeur)) {
-		const element = Couleurs[valeur];
 
-		console.log(element);
-		legende += `<li>${valeur.toString()} - <span class="legend_${valeur}">lol</span></li>`;
+for (const ville in Familles) {
+	if (Object.hasOwnProperty.call(Familles, ville)) {
+		const element = Familles[ville];
+
+		tableContent = tableContent + `
+				<tr>
+					<td>${ville}</td>
+					<td>${element}</td>
+				</tr>
+		`;
+
 	}
 }
-legende = `<ul class="legende">${legende}</ul>`;
-console.log(legende);
-document.getElementById("legende").innerHTML = legende
+
+console.log(tableContent);
+
+document.getElementById("tableContent").innerHTML = tableContent
