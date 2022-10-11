@@ -30,7 +30,7 @@ for (const ville in Familles) {
 				fillColor: Couleurs[nb_familles],
 				fillOpacity: 0.5
 			})
-			.bindPopup(`${ville} - ${nb_familles}`)
+			.bindPopup(`${ville} - ${nb_familles} famille${nb_familles > 1 ? "s" : ""}`)
 			.addTo(map);
 	}
 }
