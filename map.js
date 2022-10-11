@@ -1,4 +1,4 @@
-var map = L.map('map').setView([51.505, -0.09], 13);
+var map = L.map('map').setView([45.76938, 4.74056], 11);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -6,17 +6,34 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
-var marker = L.marker([51.5, -0.09]).addTo(map);
+var marker = L.marker([45.76963, 4.74082]).addTo(map);
 
-var circle = L.circle([51.508, -0.11], {
-	color: 'red',
-	fillColor: '#f03',
-	fillOpacity: 0.5,
-	radius: 500
-}).addTo(map);
+for (const ville in Familles) {
+	if (Object.hasOwnProperty.call(Familles, ville)) {
 
-var polygon = L.polygon([
-	[51.509, -0.08],
-	[51.503, -0.06],
-	[51.51, -0.047]
-]).addTo(map);
+		console.log(ville);
+
+		const element = Familles[ville];
+		console.log(element);
+
+		L.geoJSON(eval(ville),
+			{
+				color: Couleurs[element],
+				fillOpacity: 0.5
+			}).addTo(map);
+	}
+}
+
+
+
+L.geoJSON(Bully,
+	{
+		color: Couleurs[Familles.Bully],
+		fillOpacity: 0.5
+	}).addTo(map);
+
+L.geoJSON(Cailloux_sur_Fontaines,
+	{
+		color: Couleurs[Familles.Cailloux_sur_Fontaines],
+		fillOpacity: 0.5
+	}).addTo(map);
