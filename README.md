@@ -1,8 +1,15 @@
-# famillesChapoly
+# Projet de Cartographie des Familles du Chapoly
+
 Lieu de résidence des familles
 
-
 [![Netlify Status](https://api.netlify.com/api/v1/badges/f671bebb-8efa-460f-be30-7ae4c1a512de/deploy-status)](https://app.netlify.com/sites/chapoly/deploys)
+
+Getting the Data through Airtable.
+Read with a readonly API (aka the key is not leaked)
+
+## Annexes
+
+Pour référence ultérieure
 
 Récupération des données Géographique Openstreetmap via Overpass
 Clé = identifiant Wikidata des villes
