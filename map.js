@@ -1,35 +1,27 @@
-
 (async () => {
-
-
 
 	// This API Key is READONLY, on public data, this is under control	
 	const API_KEY = 'keygc919YSkuyLBXY';
-
 	const BASE_ID = 'appJLByrgwxjO9ADR';
-
 	const VILLES_TABLE_ID = 'tblZs4HsbaPdXLVvK';
 
-
+	const GENERAL_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+	const FRENCH_LAYER = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
 
 	//Map initialization
 	// TODO : to be changed by a variable in AIRTABLE
 	var map = L.map('map').setView([45.8148, 4.7907], 11);
 
-
-	// TODO : maybe a choice can be made in Airtable ???
-
-	// Choosing a layer (french layer) and general options
-	//	L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	// TODO : maybe the choice can be made in Airtable ???
+	// Choosing a layer (general layer or french layer) and general options
+	L.tileLayer(GENERAL_LAYER, {
 		minZoom: 10,
 		maxZoom: 13,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
 
-
-
 	//Chapoly ICON & tooltip
+	// TODO : to be stored in Airtable ?
 
 	const iconsize = 40;
 
@@ -45,7 +37,6 @@
 
 	// Building town layers, computed from JS
 
-
 	const headers = new Headers();
 
 	headers.append('Content-Type', 'application/json');
@@ -54,22 +45,53 @@
 	const headersNoCorsGEOJSON = new Headers();
 
 	headersNoCorsGEOJSON.append('Content-Type', 'application/json');
-	//headersNoCorsGEOJSON.append('Authorization', `Beare	r ${API_KEY}`);
+	headersNoCorsGEOJSON.append('Authorization', `Bearer ${API_KEY}`);
 	headersNoCorsGEOJSON.append("Access-Control-Allow-Origin", "*")
 	headersNoCorsGEOJSON.append("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
 	headersNoCorsGEOJSON.append("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
 
 
-	const raw_Airtable_data = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${VILLES_TABLE_ID}?maxRecords=100&view=WEB`, {
-		method: 'GET',
-		headers: headers
-	}).then(response => response.json());
 
-	const airtableVilles = raw_Airtable_data.records;
+	var Airtable = require('airtable');
 
-	console.log(airtableVilles);
+	var base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
 
-	villes = await cleanDataVilles(airtableVilles, headersNoCorsGEOJSON);
+	const villes = [];
+
+	const lol = await base(VILLES_TABLE_ID).select({
+		sort: [
+			{ field: 'ID', direction: 'asc' }
+		]
+	}).eachPage(function page(cities, fetchNextPage) {
+		console.log("in page function")
+		cities.forEach(function (city) {
+			console.log('Retrieved ', city.get('Ville'));
+
+
+			let new_ville = {};
+
+			new_ville.ID = city.get('ID');
+			new_ville.Label = city.get('Ville');
+
+			// const url = airtableVille.fields.GEOJSON[0].url;
+			// console.log(url);
+
+			// new_ville.GEOJSON = await fetch(url, {
+			// 	method: 'GET',
+			// 	headers: headersNoCorsGEOJSON
+			// }).then(response => response.json());
+
+			new_ville.Familles = city.get('Familles');
+
+			villes.push(new_ville);
+
+		});
+
+		fetchNextPage();
+	}, function done(error) {
+		console.log(error);
+	});
+
 
 
 	console.log(`Nombre de villes : ${villes.length}`);
@@ -141,29 +163,3 @@
 })();
 
 
-async function cleanDataVilles(airtableVilles, headersNoCorsGEOJSON) {
-
-	return new Promise((resolve, reject) => {
-		airtableVilles.forEach(async (airtableVille) => {
-
-			let new_ville = {};
-
-			new_ville.ID = airtableVille.fields.ID;
-			new_ville.Label = airtableVille.fields.Ville;
-
-			const url = airtableVille.fields.GEOJSON[0].url;
-			console.log(url);
-
-			new_ville.GEOJSON = await fetch(url, {
-				method: 'GET',
-				headers: headersNoCorsGEOJSON
-			}).then(response => response.json());
-
-
-
-			new_ville.Familles = airtableVille.fields.Familles;
-
-			villes.push(new_ville);
-		})
-	})
-}
