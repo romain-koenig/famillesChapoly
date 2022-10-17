@@ -46,14 +46,16 @@
 
 	var base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
 
-	const villes = [];
 
 
 	async function getData() {
+
+		const villes = [];
+
 		console.log("GETTING DATA FROM THE DATABASE");
 		const cities = await base(VILLES_TABLE_ID).select().all();
 
-		cities.forEach(async function (city) {
+		cities.forEach(function (city) {
 
 			console.log('Retrieved with GetData', city.get('Ville'));
 
@@ -62,12 +64,7 @@
 			new_ville.ID = city.get('ID');
 			new_ville.Label = city.get('Ville');
 
-			const url = city.get('GEOJSON')[0].url;
-			console.log(url);
-
-			new_ville.GEOJSON = await fetch(url, {
-				method: 'GET',
-			}).then(response => response.json());
+			new_ville.GEOJSONurl = city.get('GEOJSON')[0].url;
 
 			new_ville.Familles = city.get('Familles');
 
@@ -78,37 +75,42 @@
 	}
 
 	getData()
-		.then((res) => console.log("DONE: ", res))
+		.then((res) => {
+			console.log("DONE Getting DATA: ", res.length)
+
+			res.forEach(async ville => {
+				console.log("In the forEach", ville);
+				const url = ville.GEOJSONurl;
+				ville.GEOJSON = await fetch(url, {
+					method: 'GET',
+				}).then(response => response.json());
+				console.log("End of the forEach", ville);
+
+
+
+
+
+				L.geoJSON(ville.GEOJSON,
+					{
+						color: 'black',
+						fillColor: Couleurs[ville.Familles],
+						fillOpacity: 0.5
+					})
+					.bindPopup(`${ville.Label} - ${ville.Familles} famille${ville.Familles > 1 ? "s" : ""}`)
+					.addTo(map);
+
+
+			});
+			return res;
+		})
+		.then((res) => {
+			console.log("STEP 2", res.length)
+
+			//addToMap(res);
+
+
+		})
 		.catch((err) => { console.log("ERR: ", err) });
-
-
-
-
-	console.log(`Nombre de villes : ${villes.length}`);
-
-	console.log(villes);
-
-	console.log("2");
-
-	villes.forEach(ville => {
-		console.log(ville);
-	});
-
-	console.log("3");
-
-	for (const ville in villes) {
-
-		const nb_familles = Familles[ville];
-		L.geoJSON(eval(ville),
-			{
-				color: 'black',
-				fillColor: Couleurs[nb_familles],
-				fillOpacity: 0.5
-			})
-			.bindPopup(`${ville} - ${nb_familles} famille${nb_familles > 1 ? "s" : ""}`)
-			.addTo(map);
-
-	}
 
 
 
@@ -148,6 +150,33 @@
 	}
 
 	document.getElementById("tableContent").innerHTML = tableContent
+
+
+
+	function addToMap(villes) {
+
+		console.log("ADDING TO MAP", villes.length);
+		console.log(villes);
+
+		for (const ville_no in villes) {
+
+			const ville = villes[ville_no];
+
+			console.log(`Working on - ${ville.Label}`)
+			console.log(ville.GEOJSON)
+
+			const nb_familles = ville.Familles;
+			L.geoJSON(ville.GEOJSON,
+				{
+					color: 'black',
+					fillColor: Couleurs[nb_familles],
+					fillOpacity: 0.5
+				})
+				.bindPopup(`${ville.Label} - ${nb_familles} famille${nb_familles > 1 ? "s" : ""}`)
+				.addTo(map);
+
+		}
+	}
 
 
 })();
