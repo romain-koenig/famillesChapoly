@@ -42,55 +42,45 @@
 	headers.append('Content-Type', 'application/json');
 	headers.append('Authorization', `Bearer ${API_KEY}`);
 
-	const headersNoCorsGEOJSON = new Headers();
-
-	headersNoCorsGEOJSON.append('Content-Type', 'application/json');
-	headersNoCorsGEOJSON.append('Authorization', `Bearer ${API_KEY}`);
-	headersNoCorsGEOJSON.append("Access-Control-Allow-Origin", "*")
-	headersNoCorsGEOJSON.append("Access-Control-Allow-Methods", "DELETE, POST, GET, OPTIONS")
-	headersNoCorsGEOJSON.append("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
-
-
-
 	var Airtable = require('airtable');
 
 	var base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
 
 	const villes = [];
 
-	const lol = await base(VILLES_TABLE_ID).select({
-		sort: [
-			{ field: 'ID', direction: 'asc' }
-		]
-	}).eachPage(function page(cities, fetchNextPage) {
-		console.log("in page function")
-		cities.forEach(function (city) {
-			console.log('Retrieved ', city.get('Ville'));
 
+	async function getData() {
+		console.log("GETTING DATA FROM THE DATABASE");
+		const cities = await base(VILLES_TABLE_ID).select().all();
+
+		cities.forEach(async function (city) {
+
+			console.log('Retrieved with GetData', city.get('Ville'));
 
 			let new_ville = {};
 
 			new_ville.ID = city.get('ID');
 			new_ville.Label = city.get('Ville');
 
-			// const url = airtableVille.fields.GEOJSON[0].url;
-			// console.log(url);
+			const url = city.get('GEOJSON')[0].url;
+			console.log(url);
 
-			// new_ville.GEOJSON = await fetch(url, {
-			// 	method: 'GET',
-			// 	headers: headersNoCorsGEOJSON
-			// }).then(response => response.json());
+			new_ville.GEOJSON = await fetch(url, {
+				method: 'GET',
+			}).then(response => response.json());
 
 			new_ville.Familles = city.get('Familles');
 
 			villes.push(new_ville);
-
 		});
 
-		fetchNextPage();
-	}, function done(error) {
-		console.log(error);
-	});
+		return villes;
+	}
+
+	getData()
+		.then((res) => console.log("DONE: ", res))
+		.catch((err) => { console.log("ERR: ", err) });
+
 
 
 
