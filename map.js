@@ -2,6 +2,7 @@
 const API_KEY = 'keygc919YSkuyLBXY';
 const BASE_ID = 'appJLByrgwxjO9ADR';
 const VILLES_TABLE_ID = 'tblZs4HsbaPdXLVvK';
+const COULEURS_TABLE_ID = 'tblqmZUsEImqeIl9D';
 
 const GENERAL_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const FRENCH_LAYER = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
@@ -51,8 +52,9 @@ var map = L.map('map').setView([45.8148, 4.7907], 11);
 		.then(async (villes) => {
 			return await getGEOJSONData(villes, map);
 		})
-		.then((villes) => {
-			addToMap(villes);
+		.then(async (villes) => {
+			const Couleurs = await getCouleurs(base);
+			addToMap(villes, Couleurs);
 			return villes;
 		})
 		.then((villes) => {
@@ -64,19 +66,19 @@ var map = L.map('map').setView([45.8148, 4.7907], 11);
 })();
 
 
-function addToMap(villes) {
+function addToMap(villes, Couleurs) {
 
 	for (const ville_no in villes) {
 
 		const ville = villes[ville_no];
 
-		// console.log(`Working on - ${ville.Label}`)
-
 		const nb_familles = ville.Familles;
+		const couleur = Couleurs[nb_familles]
+
 		L.geoJSON(ville.GEOJSON,
 			{
 				color: 'black',
-				fillColor: Couleurs[nb_familles],
+				fillColor: couleur,
 				fillOpacity: 0.5
 			})
 			.bindPopup(`${ville.Label} - ${nb_familles} famille${nb_familles > 1 ? "s" : ""}`)
@@ -110,6 +112,27 @@ async function getData(base) {
 
 	return villes;
 }
+
+async function getCouleurs(base) {
+
+	const Couleurs = [];
+
+	const airtableColours = await base(COULEURS_TABLE_ID).select().all();
+
+	airtableColours.forEach(function (colour) {
+
+		let couleur = {};
+
+		couleur.Key = colour.get('Key');
+		couleur.Value = colour.get('Value');
+
+		Couleurs[couleur.Key] = couleur.Value;
+
+	});
+
+	return Couleurs;
+}
+
 
 function setTableauNbFamilles(res) {
 	let tableContent = "";
