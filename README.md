@@ -40,3 +40,8 @@ Vaugneray - Q1445095
 Grézieu-la-Varenne - Q387460
 Tassin-la-Demi-Lune - Q840152
 Lyon - Q208770
+
+
+Personal reminder: async await doesn't work in ForEach loops
+
+https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
