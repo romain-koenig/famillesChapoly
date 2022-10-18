@@ -151,7 +151,23 @@ function setTableauNbFamilles(res) {
 				`;
 
 	}
+
 	document.getElementById("tableContent").innerHTML = tableContent;
+
+	const totalFamilles = res.reduce((prev, current) => {
+		console.log(current.Familles);
+		return prev + current.Familles;
+	}, 0);
+
+	document.getElementById("tableFooter").innerHTML = `
+	<tr>
+		<td>Total</td>
+		<td>${totalFamilles}</td>
+	</tr>
+`;
+
+	console.log(totalFamilles);
+
 	return res;
 }
 

@@ -1,5 +1,15 @@
 #map { height: 80vh; }
 
+h1 {
+	font-size: 70px;
+	color: #ff7355;
+	font-family: 'Amatic SC', cursive;
+}
+
+tfoot {
+	font-weight: bold;
+}
+
 footer {
 	text-align: center;
 }
