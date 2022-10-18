@@ -16,7 +16,7 @@ var map = L.map('map').setView([45.8148, 4.7907], 11);
 
 	// TODO : maybe the choice can be made in Airtable ???
 	// Choosing a layer (general layer or french layer) and general options
-	L.tileLayer(GENERAL_LAYER, {
+	L.tileLayer(FRENCH_LAYER, {
 		minZoom: 10,
 		maxZoom: 13,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
