@@ -52,12 +52,12 @@
 
 		const villes = [];
 
-		console.log("GETTING DATA FROM THE DATABASE");
+		// console.log("GETTING DATA FROM THE DATABASE");
 		const cities = await base(VILLES_TABLE_ID).select().all();
 
 		cities.forEach(function (city) {
 
-			console.log('Retrieved with GetData', city.get('Ville'));
+			// console.log('Retrieved with GetData', city.get('Ville'));
 
 			let new_ville = {};
 
@@ -75,36 +75,16 @@
 	}
 
 	getData()
-		.then((res) => {
+		.then(async (res) => {
 			console.log("DONE Getting DATA: ", res.length)
 
-			res.forEach(async ville => {
-				console.log("In the forEach", ville);
-				const url = ville.GEOJSONurl;
-				ville.GEOJSON = await fetch(url, {
-					method: 'GET',
-				}).then(response => response.json());
-				console.log("End of the forEach", ville);
-
-
-
-
-
-				L.geoJSON(ville.GEOJSON,
-					{
-						color: 'black',
-						fillColor: Couleurs[ville.Familles],
-						fillOpacity: 0.5
-					})
-					.bindPopup(`${ville.Label} - ${ville.Familles} famille${ville.Familles > 1 ? "s" : ""}`)
-					.addTo(map);
-
-
-			});
-			return res;
+			return await getGEOJSONData(res, map);
 		})
 		.then((res) => {
 			console.log("STEP 2", res.length)
+
+
+			console.log(res[0].GEOJSON);
 
 			//addToMap(res);
 
@@ -181,4 +161,31 @@
 
 })();
 
+
+async function getGEOJSONData(villes, map) {
+	villes.forEach(async (ville) => {
+		console.log("In the forEach", ville);
+		const url = ville.GEOJSONurl;
+		ville.GEOJSON = await fetch(url, {
+			method: 'GET',
+		}).then(response => response.json());
+		console.log("End of the forEach", ville);
+
+
+
+
+
+		L.geoJSON(ville.GEOJSON,
+			{
+				color: 'black',
+				fillColor: Couleurs[ville.Familles],
+				fillOpacity: 0.5
+			})
+			.bindPopup(`${ville.Label} - ${ville.Familles} famille${ville.Familles > 1 ? "s" : ""}`)
+			.addTo(map);
+
+
+	});
+	return villes;
+}
 
