@@ -81,7 +81,7 @@ function addToMap(villes, Couleurs) {
 				fillColor: couleur,
 				fillOpacity: 0.5
 			})
-			.bindPopup(`${ville.Label} - ${nb_familles} famille${nb_familles > 1 ? "s" : ""}`)
+			.bindPopup(`${ville.Label} - ${nb_familles} enfant${nb_familles > 1 ? "s" : ""} scolarisé${nb_familles > 1 ? "s" : ""} à l'École du Chapoly`)
 			.addTo(map);
 
 	}
