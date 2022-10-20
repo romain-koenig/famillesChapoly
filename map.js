@@ -110,7 +110,7 @@ async function getData(base) {
 		villes.push(new_ville);
 	});
 
-	return villes;
+	return villes.filter(ville => ville.Familles > 0);
 }
 
 async function getCouleurs(base) {
