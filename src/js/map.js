@@ -38,22 +38,17 @@ var map = L.map('map').setView([45.8148, 4.7907], 11);
 
 	// Building town layers, computed from JS
 
-	const headers = new Headers();
+	// const AirtableAPIURL = `https://api.airtable.com/v0/${BASE_ID}/${VILLES_TABLE_ID}?maxRecords=100&view=WEB`;
 
-	headers.append('Content-Type', 'application/json');
-	headers.append('Authorization', `Bearer ${API_KEY}`);
+	const raw_Local_data = await (fetch('./data/villes.json')
+	).then(response => response.json());
 
-	var Airtable = require('airtable');
+	console.log(raw_Local_data);
 
-	var base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
-
-
-	getData(base)
+	getData(raw_Local_data)
 		.then(async (villes) => {
-			return await getGEOJSONData(villes, map);
-		})
-		.then(async (villes) => {
-			const Couleurs = await getCouleurs(base);
+			console.log(villes);
+			const Couleurs = await getCouleurs();
 			addToMap(villes, Couleurs);
 			return villes;
 		})
@@ -75,7 +70,9 @@ function addToMap(villes, Couleurs) {
 		const nb_familles = ville.Familles;
 		const couleur = Couleurs[nb_familles]
 
-		L.geoJSON(ville.GEOJSON,
+		console.log(ville.GEOJSON)
+
+		L.geoJSON(JSON.parse(ville.GEOJSON),
 			{
 				color: 'black',
 				fillColor: couleur,
@@ -87,25 +84,21 @@ function addToMap(villes, Couleurs) {
 	}
 }
 
-async function getData(base) {
+async function getData(jsonData) {
 
 	const villes = [];
 
-	// console.log("GETTING DATA FROM THE DATABASE");
-	const cities = await base(VILLES_TABLE_ID).select().all();
-
-	cities.forEach(function (city) {
-
+	jsonData.records.forEach(function (city) {
 		// console.log('Retrieved with GetData', city.get('Ville'));
 
 		let new_ville = {};
 
-		new_ville.ID = city.get('ID');
-		new_ville.Label = city.get('Ville');
+		new_ville.ID = city.fields.ID;
+		new_ville.Label = city.fields.Ville;
 
-		new_ville.GEOJSONurl = city.get('GEOJSON')[0].url;
+		new_ville.GEOJSON = city.fields.GEOJSON;
 
-		new_ville.Familles = city.get('Familles');
+		new_ville.Familles = city.fields.Familles;
 
 		villes.push(new_ville);
 	});
@@ -115,20 +108,19 @@ async function getData(base) {
 
 async function getCouleurs(base) {
 
-	const Couleurs = [];
-
-	const airtableColours = await base(COULEURS_TABLE_ID).select().all();
-
-	airtableColours.forEach(function (colour) {
-
-		let couleur = {};
-
-		couleur.Key = colour.get('Key');
-		couleur.Value = colour.get('Value');
-
-		Couleurs[couleur.Key] = couleur.Value;
-
-	});
+	const Couleurs = [
+		"#000000",
+		"#E3E3C8",
+		"#C2CFA1",
+		"#95BB7A",
+		"#5DA753",
+		"#5C9D4B",
+		"#5B9343",
+		"#59883B",
+		"#577D34",
+		"#54712D",
+		"#506627",
+	];
 
 	return Couleurs;
 }
@@ -166,20 +158,4 @@ function setTableauNbFamilles(res) {
 `;
 
 	return res;
-}
-
-async function getGEOJSONData(villes, map) {
-
-	for await (const ville of villes) {
-
-		//console.log("In the forEach", ville);
-		const url = ville.GEOJSONurl;
-		ville.GEOJSON = await fetch(url, {
-			method: 'GET',
-		}).then(response => response.json());
-		//	console.log("End of the forEach", ville);
-
-	}
-
-	return villes;
 }
