@@ -1,0 +1,11 @@
+/* TEAM */
+
+Développement: Romain Koenig          
+Site: kromatic.fr
+
+
+/* SITE */
+Last update: 2022/11/17
+
+Standards: HTML5, CSS3                           
+Components: Bootstrap, Leaflet
