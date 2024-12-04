@@ -14,6 +14,20 @@ Pour référence ultérieure
 Récupération des données Géographique Openstreetmap via Overpass
 Clé = identifiant Wikidata des villes
 
+On va sur <https://overpass-turbo.eu/>
+
+On lance la requête
+
+```
+[out:json][timeout:25];
+rel[wikidata="QXXXXX"];
+out geom;
+```
+
+en remplacant QXXXXX par l'identifiant Wikidata de la ville
+
+On télécharge le GEOJSON et on le met dans Airtable
+
 Brignais - Q1647506
 Bully - Q582184
 Cailloux-sur-Fontaines - Q1469681
@@ -40,8 +54,8 @@ Vaugneray - Q1445095
 Grézieu-la-Varenne - Q387460
 Tassin-la-Demi-Lune - Q840152
 Lyon - Q208770
-
+Saint-Didier-au-Mont-d'Or - Q1617501
 
 Personal reminder: async await doesn't work in ForEach loops
 
-https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
+<https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop>
